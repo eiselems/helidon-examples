@@ -18,8 +18,12 @@ package io.helidon.examples.quickstart.se;
 
 import io.helidon.config.Config;
 import io.helidon.logging.common.LogConfig;
+import io.helidon.service.registry.Services;
 import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
+import io.helidon.webserver.http.HttpService;
+
+import java.util.List;
 
 /**
  * The application main class.
@@ -45,9 +49,18 @@ public final class Main {
         Config config = Config.create();
         Config.global(config);
 
+        HttpService httpService = Services.get(HttpService.class);
+
+        TestService testService = Services.get(TestService.class);
+
+        if(testService == null) {
+            throw new IllegalStateException("TestService not found");
+        }
+
         WebServer server = WebServer.builder()
                 .config(config.get("server"))
-                .routing(Main::routing)
+                .routing(routingBuilder -> routingBuilder
+                        .register("/greet", httpService))
                 .build()
                 .start();
 

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.helidon.config.Config;
 import io.helidon.http.Status;
+import io.helidon.service.registry.Service;
 import io.helidon.webserver.http.HttpRules;
 import io.helidon.webserver.http.HttpService;
 import io.helidon.webserver.http.ServerRequest;
@@ -44,6 +45,7 @@ import jakarta.json.JsonObject;
  * <p>
  * The message is returned as a JSON object.
  */
+@Service.Singleton
 public class GreetService implements HttpService {
 
     private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
@@ -57,7 +59,7 @@ public class GreetService implements HttpService {
         this(Config.global().get("app"));
     }
 
-    GreetService(Config appConfig) {
+    private GreetService(Config appConfig) {
         greeting.set(appConfig.get("greeting").asString().orElse("Ciao"));
     }
 
